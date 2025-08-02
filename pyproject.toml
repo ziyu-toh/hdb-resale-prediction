@@ -28,6 +28,8 @@ dependencies = [
     "python-dotenv",
     "ruff",
     "scikit-learn",
+    "torch",
+    "polars", 
 ]
 requires-python = "~=3.12.0"
 
