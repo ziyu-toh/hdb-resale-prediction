@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "bike_snowflake"
 version = "0.0.1"
-description = "Prediction modelling by a snowflake for snowflakes"
+description = "HDB Resale Flat Price Prediction"
 authors = [
   { name = "Zi Yu (Nathan)" },
 ]
@@ -38,7 +38,7 @@ requires-python = "~=3.12.0"
 
 [tool.ruff]
 line-length = 99
-src = ["bike_snowflake"]
+src = ["hdb_resale_prediction"]
 include = ["pyproject.toml", "bike_snowflake/**/*.py"]
 
 [tool.ruff.lint]
