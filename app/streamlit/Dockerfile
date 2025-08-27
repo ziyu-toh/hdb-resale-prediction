@@ -1,0 +1,24 @@
+FROM python:3.12
+
+WORKDIR /app
+
+# Copy from specified file path (in docker build -t) -> to target file path
+COPY ./requirements.txt /app/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+
+# Copy from specified file path (in docker build -t) -> to target file path
+COPY . /app/streamlit
+
+# informs Docker that the container listens on the specified network ports at runtime. Your container needs to listen to Streamlit’s (default) port 8501:
+EXPOSE 8501
+
+# HEALTHCHECK instruction tells Docker how to test a container to check that it is still working. Your container needs to listen to Streamlit’s (default) port 8501
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+# Exec form: CMD ["executable","param1","param2"]
+# Make sure to always use the exec form to ensure that FastAPI can shutdown gracefully and lifespan events are triggered.
+CMD ["streamlit", "run", "streamlit/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+# To build the container:  docker build -t streamlit_image ./app/streamlit
+# To run the container: docker run -p 8501:8501 streamlit_image

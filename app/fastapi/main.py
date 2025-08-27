@@ -3,8 +3,8 @@ import polars as pl
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# Load champion model
-with open('models/champion_model.pkl', 'rb') as f:
+# Load champion model. Once dockerised, it has to be connected to the file path on docker
+with open('/app/fastapi/models/champion_model.pkl', 'rb') as f:
     loaded_model = pickle.load(f)
 
 # Define input data model
