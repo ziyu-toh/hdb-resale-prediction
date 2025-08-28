@@ -12,7 +12,7 @@ flat_model_revised = st.text_input("Flat Model (Revised)")
 town = st.text_input("Town")
 
 if st.button("Submit"):
-    fastapi_url = "http://54.169.110.104:80/predict" # the public url for the AWS ECS holding the FastAPI Docker container
+    fastapi_url = "http://127.0.0.1/predict" # "http://54.169.110.104:80/predict" 
     payload = {
         "flat_age_years": flat_age_years,
         "floor_area_sqm": floor_area_sqm,
