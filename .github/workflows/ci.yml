@@ -1,9 +1,9 @@
 name: Continuous Integration
 on:
   push:
-    branches: [ "deploy" ]
+    branches: [ "deployment" ]
   pull_request:
-    branches: [ "deploy" ]
+    branches: [ "deployment" ]
   workflow_dispatch:
   
 permissions: write-all
