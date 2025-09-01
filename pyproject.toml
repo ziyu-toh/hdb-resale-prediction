@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "bike_snowflake"
+name = "hdb-resale-prediction"
 version = "0.0.1"
 description = "HDB Resale Flat Price Prediction"
 authors = [
@@ -39,12 +39,12 @@ requires-python = "~=3.12.0"
 [tool.ruff]
 line-length = 99
 src = ["hdb_resale_prediction"]
-include = ["pyproject.toml", "bike_snowflake/**/*.py"]
+include = ["pyproject.toml", "hdb-resale-prediction/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]  # Add import sorting
 
 [tool.ruff.lint.isort]
-known-first-party = ["bike_snowflake"]
+known-first-party = ["hdb-resale-prediction"]
 force-sort-within-sections = true
 
