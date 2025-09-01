@@ -2,6 +2,7 @@ import polars as pl
 import os
 
 cwd = os.getcwd()
+print("CWD: ", cwd)
 DATA_PATH = os.path.join(cwd, "data/raw")
 print("Data path: ", DATA_PATH)
 
