@@ -1,7 +1,9 @@
 import polars as pl
 import os
 
-DATA_PATH = "data/raw"
+cwd = os.getcwd()
+DATA_PATH = os.path.join(cwd, "data/raw")
+print("Data path: ", DATA_PATH)
 
 # Load data
 file_names = [x for x in os.listdir(DATA_PATH) if ".csv" in x]  # List all CSV files in the raw data directory
