@@ -3,12 +3,12 @@ FROM python:3.12
 WORKDIR /app
 
 # Copy from specified file path (in docker build -t) -> to target file path
-COPY ./requirements.txt /app/requirements.txt
+COPY /app/streamlit/requirements.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 # Copy from specified file path (in docker build -t) -> to target file path
-COPY . /app/streamlit
+COPY /app/streamlit /app/streamlit
 
 # informs Docker that the container listens on the specified network ports at runtime. Your container needs to listen to Streamlit’s (default) port 8501:
 EXPOSE 8501
