@@ -1,9 +1,7 @@
 import polars as pl
 import os
 
-cwd = os.getcwd()
-DATA_PATH = os.path.join(cwd, "data/raw")
-print("Data path: ", DATA_PATH)
+DATA_PATH = "data/raw"
 
 # Load data
 file_names = [x for x in os.listdir(DATA_PATH) if ".csv" in x]  # List all CSV files in the raw data directory
@@ -46,7 +44,7 @@ df_combined_col = df_combined_col.with_columns(
 )
 
 df_combined_col = df_combined_col.with_columns(
-    storey_range_grouped = (pl.when(pl.col("storey_max")<= 15).then(pl.lit("0-15"))
+    storey_range_grouped = (pl.when(pl.col("storey_max")<= 15).then(pl.lit("1-15"))
                             .when(pl.col("storey_max").is_between(16, 30)).then(pl.lit("16-30"))
                             .otherwise(pl.lit("31+")))
 )

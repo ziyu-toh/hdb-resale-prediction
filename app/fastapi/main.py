@@ -15,6 +15,7 @@ class InputData(BaseModel):
     flat_type: str
     flat_model_revised: str
     town: str
+    storey_range_grouped: str
     
 # Initialize FastAPI app
 app = FastAPI()

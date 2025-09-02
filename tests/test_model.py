@@ -10,7 +10,7 @@ def test_prediction():
                                 "flat_age_years":[46],
                                 "floor_area_sqm":[44.0],
                                 "days_from_earliest_data":[4323],
-                                "storey_range_grouped":["0-15"]})
+                                "storey_range_grouped":["1-15"]})
     
     with open('models/champion_model.pkl', 'rb') as f:
         model = pickle.load(f)

@@ -1,0 +1,9 @@
+services:
+  fastapi:
+    build: ./app/fastapi
+    ports:
+      - "80:80"
+  streamlit:
+    build: ./app/streamlit
+    ports:
+      - "8501:8501"
