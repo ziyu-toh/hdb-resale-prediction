@@ -192,3 +192,4 @@ cython_debug/
 
 # MLFlow
 /notebooks/mlruns/
+/mlruns/

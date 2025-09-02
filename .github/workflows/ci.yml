@@ -4,7 +4,6 @@ on:
     branches: [ "deployment" ]
   pull_request:
     branches: [ "deployment" ]
-  workflow_dispatch:
   
 permissions: write-all
 jobs:
@@ -12,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: iterative/setup-cml@v2
+      # - uses: iterative/setup-cml@v2 # To implement next time
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
       - name: Install Packages
         run: make requirements
       - name: Format
