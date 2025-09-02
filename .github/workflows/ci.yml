@@ -19,6 +19,6 @@ jobs:
         run: make requirements
       - name: Format
         run: make format
-      - name: Cleaning data 
-        run: make clean_data
+      - name: Test
+        run: make test
 
