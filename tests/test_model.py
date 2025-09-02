@@ -4,13 +4,19 @@ import pandas as pd
 
 def test_prediction():
     # Load data
-    test_df = pd.read_parquet('data/processed/test.parquet')
+    sample_data = pd.DataFrame({"town":["ANG MO KIO"],
+                                "flat_type":["2 ROOM"],
+                                "flat_model_revised":["Improved"],
+                                "flat_age_years":[46],
+                                "floor_area_sqm":[44.0],
+                                "days_from_earliest_data":[4323],
+                                "storey_range_grouped":["0-15"]})
     
     with open('models/champion_model.pkl', 'rb') as f:
         model = pickle.load(f)
     
     # Prediction
-    pred = model.predict(test_df.drop(columns=['resale_price']).iloc[:1])
+    pred = model.predict(sample_data)
 
     assert model is not None, "No model found"
     assert pred is not None, "No predictions made"
