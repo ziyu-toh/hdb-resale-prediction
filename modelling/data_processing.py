@@ -54,6 +54,13 @@ df_combined_col.group_by("storey_range_grouped").agg(
     pl.col("storey_max").count().alias("counts")
 ).sort("storey_range_grouped")
 
+# Convert to title case for town, flat type and flat model
+df_combined_col = df_combined_col.with_columns(
+    town = pl.col("town").str.to_titlecase(),
+    flat_type = pl.col("flat_type").str.to_titlecase(),
+    flat_model_revised = pl.col("flat_model_revised").str.to_titlecase()
+)
+
 
 # TODO: Other factors to KIV: Distance from MRT/amenities, lease years left, supply and demand of surrounding areas
 

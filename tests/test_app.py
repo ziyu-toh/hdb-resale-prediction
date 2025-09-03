@@ -3,13 +3,13 @@ from fastapi.testclient import TestClient
 import numpy as np
 import polars as pl
 
-sample_json = {"town":"ANG MO KIO",
-                                "flat_type":"2 ROOM",
-                                "flat_model_revised":"Improved",
-                                "flat_age_years":46,
-                                "floor_area_sqm":44.0,
-                                "days_from_earliest_data":4323,
-                                "storey_range_grouped":"1-15"}
+sample_json = {"town":"Ang Mo Kio",
+                "flat_type":"2 Room",
+                "flat_model_revised":"Improved",
+                "flat_age_years":46,
+                "floor_area_sqm":44.0,
+                "days_from_earliest_data":4323,
+                "storey_range_grouped":"1-15"}
 
 def test_prediction():
     # Load data
