@@ -15,7 +15,6 @@ test_df = pd.read_parquet('data/processed/test.parquet')
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 
-
 assert set(train_df["flat_model_revised"].values) == set(config["data_flat_models"]), "Different flat models in train data"
 assert set(train_df["flat_type"].values) == set(config["data_flat_types"]), "Different flat types in train data"
 assert set(train_df["town"].values) == set(config["data_towns"]), "Different towns in train data"

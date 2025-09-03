@@ -193,3 +193,6 @@ cython_debug/
 # MLFlow
 /notebooks/mlruns/
 /mlruns/
+
+# AWS Layers for Lambda
+/aws_layers/
