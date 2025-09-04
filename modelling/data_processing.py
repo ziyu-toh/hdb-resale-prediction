@@ -1,5 +1,6 @@
-import polars as pl
+import pandas as pd
 import os
+from datetime import datetime
 
 DATA_PATH = "data/raw"
 
@@ -9,78 +10,84 @@ file_names = [x for x in os.listdir(DATA_PATH) if ".csv" in x]  # List all CSV f
 df_list = []
 for file in file_names:
     print("Loading file:", file)
-    df = pl.scan_csv(os.path.join(DATA_PATH, file), infer_schema=False)
+    df = pd.read_csv(os.path.join(DATA_PATH, file), dtype=str)  # Read all columns as strings initially
     df_list.append(df)
 print("Loaded", len(df_list), "files.")
 
-# Combine lazyframes into a single lazyframe
-df_combined = pl.concat(df_list, how="align_full")
-df_combined_col = df_combined.collect()
+# Combine dataframes into a single dataframe
+df_combined_col = pd.concat(df_list, ignore_index=True, sort=False)
 
 # Convert variables to appropriate types
-df_combined_col = df_combined_col.with_columns(
-    pl.col("resale_price").cast(pl.Float64),
-    pl.col("lease_commence_date").cast(pl.Int64),
-    pl.col("floor_area_sqm").cast(pl.Float64),
-    pl.col("month").str.to_date("%Y-%m")
-)
+df_combined_col['resale_price'] = pd.to_numeric(df_combined_col['resale_price'], errors='coerce')
+df_combined_col['lease_commence_date'] = pd.to_numeric(df_combined_col['lease_commence_date'], errors='coerce').astype('Int64')
+df_combined_col['floor_area_sqm'] = pd.to_numeric(df_combined_col['floor_area_sqm'], errors='coerce')
+df_combined_col['month'] = pd.to_datetime(df_combined_col['month'], format='%Y-%m')
 
 # Calculate months from earliest month in dataset (Mar-2012)
-df_combined_col = df_combined_col.with_columns(
-    flat_age_years = (pl.col("month").dt.year() - pl.col("lease_commence_date")),
-    days_from_earliest_data = (pl.col('month') - pl.date(2012, 3, 1)).dt.total_days()
-).drop("remaining_lease") # can be dropped
+df_combined_col['flat_age_years'] = df_combined_col['month'].dt.year - df_combined_col['lease_commence_date']
+earliest_date = pd.to_datetime('2012-03-01')
+df_combined_col['days_from_earliest_data'] = (df_combined_col['month'] - earliest_date).dt.days
+
+# Drop remaining_lease column
+df_combined_col = df_combined_col.drop('remaining_lease', axis=1, errors='ignore')
 
 # Cleaning flat model: Combine Maisonettes
-df_combined_col = df_combined_col.with_columns(flat_model_revised = pl.when(pl.col("flat_model").str.contains("Maisonette"))
-    .then(pl.lit("Maisonette"))
-    .otherwise(pl.col("flat_model"))
+df_combined_col['flat_model_revised'] = df_combined_col['flat_model'].apply(
+    lambda x: 'Maisonette' if 'Maisonette' in str(x) else x
 )
-df_combined_col.select(pl.col("flat_model_revised").unique()).sort("flat_model_revised")
+
+# Check unique values
+print(df_combined_col['flat_model_revised'].unique())
 
 # Create min max value for stories, then group every 15 storeys since a part of the data groups every 5 floors instead of 3 floors
-df_combined_col = df_combined_col.with_columns(
-    storey_max = pl.col("storey_range").str.slice(-2,2).cast(pl.Int64)
-)
+df_combined_col['storey_max'] = df_combined_col['storey_range'].str.slice(-2, None).astype(int)
 
-df_combined_col = df_combined_col.with_columns(
-    storey_range_grouped = (pl.when(pl.col("storey_max")<= 15).then(pl.lit("1-15"))
-                            .when(pl.col("storey_max").is_between(16, 30)).then(pl.lit("16-30"))
-                            .otherwise(pl.lit("31+")))
-)
-df_combined_col.group_by("storey_range_grouped").agg(
-    pl.col("storey_max").min().alias("min_storey"),
-    pl.col("storey_max").max().alias("max_storey"),
-    pl.col("storey_max").count().alias("counts")
-).sort("storey_range_grouped")
+def categorize_storey(storey_max):
+    if storey_max <= 15:
+        return "1-15"
+    elif 16 <= storey_max <= 30:
+        return "16-30"
+    else:
+        return "31+"
+
+df_combined_col['storey_range_grouped'] = df_combined_col['storey_max'].apply(categorize_storey)
+
+# Group by storey_range_grouped to check the results
+storey_summary = df_combined_col.groupby('storey_range_grouped')['storey_max'].agg([
+    ('min_storey', 'min'),
+    ('max_storey', 'max'),
+    ('counts', 'count')
+]).reset_index().sort_values('storey_range_grouped')
+print(storey_summary)
 
 # Convert to title case for town, flat type and flat model
-df_combined_col = df_combined_col.with_columns(
-    town = pl.col("town").str.to_titlecase(),
-    flat_type = pl.col("flat_type").str.to_titlecase(),
-    flat_model_revised = pl.col("flat_model_revised").str.to_titlecase()
-)
-
+df_combined_col['town'] = df_combined_col['town'].str.title()
+df_combined_col['flat_type'] = df_combined_col['flat_type'].str.title()
+df_combined_col['flat_model_revised'] = df_combined_col['flat_model_revised'].str.title()
 
 # TODO: Other factors to KIV: Distance from MRT/amenities, lease years left, supply and demand of surrounding areas
 
-
 # Keep relevant columns
-df_output = df_combined_col.select(
-        'month',
-        'town',
-        'flat_type',
-        'flat_model_revised',
-        'flat_age_years',
-        'floor_area_sqm',
-        'days_from_earliest_data',
-        'storey_range_grouped',
-        'resale_price',
-)
+df_output = df_combined_col[[
+    'month',
+    'town',
+    'flat_type',
+    'flat_model_revised',
+    'flat_age_years',
+    'floor_area_sqm',
+    'days_from_earliest_data',
+    'storey_range_grouped',
+    'resale_price'
+]]
 
 # Split into train (2012-2023), test(2024) and deploy sets (2025)
-train = df_output.filter(df_output['month'].dt.year().is_between(2012, 2023)).drop("month").write_parquet("data/processed/train.parquet")
-test = df_output.filter(df_output['month'].dt.year() == 2024).drop("month").write_parquet("data/processed/test.parquet")
-deploy = df_output.filter(df_output['month'].dt.year() > 2024).drop("month").write_parquet("data/processed/deploy.parquet")
+train = df_output[df_output['month'].dt.year.between(2012, 2023)].drop('month', axis=1)
+train.to_parquet("data/processed/train.parquet", index=False)
+
+test = df_output[df_output['month'].dt.year == 2024].drop('month', axis=1)
+test.to_parquet("data/processed/test.parquet", index=False)
+
+deploy = df_output[df_output['month'].dt.year > 2024].drop('month', axis=1)
+deploy.to_parquet("data/processed/deploy.parquet", index=False)
 
 print("Data processing complete.")
