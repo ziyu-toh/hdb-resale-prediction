@@ -1,18 +1,20 @@
 import pandas as pd
-import os
-from datetime import datetime
+import boto3
 
-DATA_PATH = "data/raw"
+# Setting up AWS connection
+s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+input_bucket = s3_input.Bucket('hdb-resale-pred-raw')
 
 # Load data
-file_names = [x for x in os.listdir(DATA_PATH) if ".csv" in x]  # List all CSV files in the raw data directory
-
 df_list = []
-for file in file_names:
-    print("Loading file:", file)
-    df = pd.read_csv(os.path.join(DATA_PATH, file), dtype=str)  # Read all columns as strings initially
+for obj in input_bucket.objects.all():
+    key = obj.key
+    body = obj.get()['Body']
+
+    df = pd.read_csv(body, dtype=str)
     df_list.append(df)
-print("Loaded", len(df_list), "files.")
+    
+print(len(df_list), "files loaded from S3")
 
 # Combine dataframes into a single dataframe
 df_combined_col = pd.concat(df_list, ignore_index=True, sort=False)
@@ -82,12 +84,14 @@ df_output = df_combined_col[[
 
 # Split into train (2012-2023), test(2024) and deploy sets (2025)
 train = df_output[df_output['month'].dt.year.between(2012, 2023)].drop('month', axis=1)
-train.to_parquet("data/processed/train.parquet", index=False)
-
 test = df_output[df_output['month'].dt.year == 2024].drop('month', axis=1)
-test.to_parquet("data/processed/test.parquet", index=False)
-
 deploy = df_output[df_output['month'].dt.year > 2024].drop('month', axis=1)
-deploy.to_parquet("data/processed/deploy.parquet", index=False)
+
+# Output to AWS S3
+s3_output = boto3.resource('s3', region_name='ap-southeast-1')
+output_bucket = s3_output.Bucket('hdb-resale-pred-processed')
+output_bucket.put_object(Key='train.csv', Body=train.to_csv(index=False))
+output_bucket.put_object(Key='test.csv', Body=test.to_csv(index=False))
+output_bucket.put_object(Key='deploy.csv', Body=deploy.to_csv(index=False))
 
 print("Data processing complete.")
