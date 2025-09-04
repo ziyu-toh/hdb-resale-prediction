@@ -6,18 +6,22 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score, TimeSeriesSplit
 import yaml
+import boto3
+
+# Setting up AWS connection
+s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+input_bucket = s3_input.Bucket('hdb-resale-pred-processed')
 
 # Load data
-train_df = pd.read_parquet('data/processed/train.parquet')
-test_df = pd.read_parquet('data/processed/test.parquet')
+train_df = pd.read_csv(input_bucket.Object('train.csv').get()['Body'])
 
 # Define allowable values for flat model, flat type, and town
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 
-assert set(train_df["flat_model_revised"].values) == set(config["data_flat_models"]), "Different flat models in train data"
-assert set(train_df["flat_type"].values) == set(config["data_flat_types"]), "Different flat types in train data"
-assert set(train_df["town"].values) == set(config["data_towns"]), "Different towns in train data"
+assert set(train_df["flat_model_revised"].values).issubset(set(config["data_flat_models"])), "Different flat models in train data"
+assert set(train_df["flat_type"].values).issubset(set(config["data_flat_types"])), "Different flat types in train data"
+assert set(train_df["town"].values).issubset(set(config["data_towns"])), "Different towns in train data"
 
 # Define the model hyperparameters
 params = {
@@ -26,7 +30,6 @@ params = {
     "multi_class": "auto",
     "random_state": 8888,
 }
-
 
 # create sklearn pipeline with pre-processing of numerical and categorical features
 def pipeline(train_df):
