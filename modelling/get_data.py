@@ -4,7 +4,6 @@ import pandas as pd
 import urllib3
 from io import StringIO
 
-s3 = boto3.client("s3")
 def lambda_handler(event, context):
     bucket_name = "hdb-resale-pred-raw"
 
@@ -24,6 +23,7 @@ def lambda_handler(event, context):
     df = pd.json_normalize(data["result"]["records"])
 
     # Save to bucket as csv
+    s3 = boto3.client("s3")
     s3.put_object(Bucket=bucket_name, 
                   Key="FromJan2017onwards.csv",
                   Body=df.to_csv(index=False))

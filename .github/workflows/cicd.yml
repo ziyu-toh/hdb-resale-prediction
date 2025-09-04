@@ -1,9 +1,9 @@
 name: Continuous Integration
 on:
   push:
-    branches: [ "deployment" ]
+    branches: [ "deployment", "ct"]
   pull_request:
-    branches: [ "deployment" ]
+    branches: [ "deployment", "ct" ]
   
 permissions: write-all
 jobs:
