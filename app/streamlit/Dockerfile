@@ -5,6 +5,9 @@ WORKDIR /app
 # Copy from specified file path (in docker build -t) -> to target file path
 COPY /app/streamlit/requirements.txt /app/requirements.txt
 
+# Copy yaml file as well
+COPY /config.yaml /app/config.yaml
+
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 # Copy from specified file path (in docker build -t) -> to target file path
@@ -20,5 +23,4 @@ HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 # Make sure to always use the exec form to ensure that FastAPI can shutdown gracefully and lifespan events are triggered.
 CMD ["streamlit", "run", "streamlit/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
-# To build the container:  docker build -t streamlit_image ./app/streamlit
-# To run the container: docker run -p 8501:8501 streamlit_image
+# To build container, use docker compose up from parent directory

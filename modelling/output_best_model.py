@@ -17,6 +17,6 @@ loaded_model = mlflow.sklearn.load_model(BEST_RUN_ID)
 with open('models/champion_model.pkl', 'wb') as f:
     pickle.dump(loaded_model, f)
     
-with open('app/fastapi/models/champion_model.pkl', 'wb') as f:
+with open('app/fastapi_app/models/champion_model.pkl', 'wb') as f:
     pickle.dump(loaded_model, f)
     

@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 # Load champion model. Once dockerised, it has to be connected to the file path on docker
-with open('./app/fastapi/models/champion_model.pkl', 'rb') as f:
+# . refers to current WD, specified on Dockerfile
+with open('./fastapi_app/models/champion_model.pkl', 'rb') as f:
     loaded_model = pickle.load(f)
 
 # Define input data model
