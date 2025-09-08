@@ -21,6 +21,6 @@ HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 # Exec form: CMD ["executable","param1","param2"]
 # Make sure to always use the exec form to ensure that FastAPI can shutdown gracefully and lifespan events are triggered.
-CMD ["streamlit", "run", "streamlit/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "/app/streamlit/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
 # To build container, use docker compose up from parent directory

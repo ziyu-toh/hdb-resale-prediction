@@ -1,4 +1,4 @@
-from app.fastapi.main import app, loaded_model
+from app.fastapi_app.main import app, loaded_model
 from fastapi.testclient import TestClient
 import numpy as np
 import polars as pl

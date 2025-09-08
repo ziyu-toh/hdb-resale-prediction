@@ -13,6 +13,6 @@ COPY /app/fastapi_app /app/fastapi_app
 
 # Exec form: CMD ["executable","param1","param2"]
 # Make sure to always use the exec form to ensure that FastAPI can shutdown gracefully and lifespan events are triggered.
-CMD ["fastapi", "run", "./fastapi_app/main.py", "--port", "80"]
+CMD ["fastapi", "run", "/app/fastapi_app/main.py", "--port", "80"]
 
 # To build container, use docker compose up from parent directory

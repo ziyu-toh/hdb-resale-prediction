@@ -6,7 +6,7 @@ import yaml
 st.title("HDB Resale Price Predictor")
 
 # Load preset data values
-with open("config.yaml", "r") as file:
+with open("/app/config.yaml", "r") as file:
     config = yaml.safe_load(file)
     print(config)
 
