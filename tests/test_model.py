@@ -1,10 +1,10 @@
 import numpy as np
 import pickle
-import polars as pl
+import pandas as pd
 
 def test_prediction():
     # Load data
-    sample_data = pl.DataFrame({"town":["ANG MO KIO"],
+    sample_data = pd.DataFrame({"town":["ANG MO KIO"],
                                 "flat_type":["2 ROOM"],
                                 "flat_model_revised":["Improved"],
                                 "flat_age_years":[46],
