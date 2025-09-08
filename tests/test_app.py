@@ -1,7 +1,7 @@
 from app.fastapi_app.main import app, loaded_model
 from fastapi.testclient import TestClient
 import numpy as np
-import polars as pl
+import pandas as pd
 
 sample_json = {"town":"Ang Mo Kio",
                 "flat_type":"2 Room",
@@ -13,8 +13,8 @@ sample_json = {"town":"Ang Mo Kio",
 
 def test_prediction():
     # Load data
-    sample_data = pl.DataFrame([sample_json])
-    
+    sample_data = pd.DataFrame([sample_json])
+
     # Prediction
     pred = loaded_model.predict(sample_data)
 

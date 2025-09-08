@@ -1,5 +1,5 @@
 import pickle
-import polars as pl
+import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -27,7 +27,7 @@ async def root():
 
 @app.post("/predict")
 async def predict(input_data: InputData):
-    input_df = pl.DataFrame([input_data])
+    input_df = pd.DataFrame([input_data.model_dump()])
     
     # Prediction
     try:
