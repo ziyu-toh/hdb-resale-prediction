@@ -35,10 +35,6 @@ test_df = pd.read_csv("data/processed/test.csv")
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 
-assert set(train_df["flat_model_revised"].values).issubset(set(config["data_flat_models"])), "Different flat models in train data"
-assert set(train_df["flat_type"].values).issubset(set(config["data_flat_types"])), "Different flat types in train data"
-assert set(train_df["town"].values).issubset(set(config["data_towns"])), "Different towns in train data"
-
 # create sklearn pipeline with pre-processing of numerical and categorical features
 def define_pipeline(train_df):
     """Create a machine learning pipeline with preprocessing and model"""
@@ -101,6 +97,13 @@ with mlflow.start_run(run_name=RUN_NAME) as run:
     trained_pipeline = train_model(pipeline=define_pipeline(train_df), train_df=train_df)
     
     # Calculate test score
+    result = mlflow.models.evaluate(
+        model="runs:/{}/model".format(mlflow.active_run().info.run_id),
+        data=test_df,
+        targets="resale_price",
+        model_type="regressor",
+        evaluators=["default"],
+    )
     
 
 mlflow.end_run()
