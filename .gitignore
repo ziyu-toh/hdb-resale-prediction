@@ -196,3 +196,6 @@ cython_debug/
 
 # AWS Layers for Lambda
 /aws_layers/
+
+# ML artifacts
+/mlartifacts/

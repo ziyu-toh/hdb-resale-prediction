@@ -81,12 +81,13 @@ def train_model(pipeline, df):
     y = df['resale_price']
 
     grid_search = GridSearchCV(pipeline, 
-                          cv=TimeSeriesSplit(n_splits=K_FOLDS), 
-                          param_grid=params, 
-                          scoring='neg_root_mean_squared_error',
-                          refit=True,
-                          verbose=1, 
-                          n_jobs=-1,)
+                    cv=TimeSeriesSplit(n_splits=K_FOLDS), 
+                    param_grid=params, 
+                    scoring='neg_root_mean_squared_error',
+                    refit=True,
+                    verbose=1, 
+                    n_jobs=-1,
+                    )
 
     grid_search.fit(X, y)
     
@@ -111,7 +112,6 @@ def get_feature_importance(trained_grid_search, test_df):
         'importance_std': r.importances_std[sorted_idx]
     })
 
-    print("Feature importances:\n", importance_df)
     return importance_df
 
 # Plot
@@ -154,5 +154,3 @@ with mlflow.start_run(run_name=RUN_NAME, nested=True) as run:
         model_type="regressor",
         evaluators=["default"]
     )   
-    
-
