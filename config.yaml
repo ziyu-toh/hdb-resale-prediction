@@ -6,6 +6,7 @@ data_feature_names:
   - storey_range_grouped
   - town
   - days_from_earliest_data
+  - resale_price
 
 data_towns:
   - Ang Mo Kio

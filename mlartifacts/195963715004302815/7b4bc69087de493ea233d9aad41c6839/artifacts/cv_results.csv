@@ -1,0 +1,2 @@
+mean_fit_time,std_fit_time,mean_score_time,std_score_time,param_reg__l1_ratio,param_reg__random_state,params,split0_test_score,split1_test_score,mean_test_score,std_test_score,rank_test_score
+0.20312988758087158,0.07744991779327393,0.06832742691040039,0.004230499267578125,0.5,42,"{'reg__l1_ratio': 0.5, 'reg__random_state': 42}",-132905.779492584,-114910.39104183746,-123908.08526721073,8997.69422537327,1
