@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import ElasticNet
+from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
@@ -15,17 +16,17 @@ import boto3
 
 # Defining MLFlow server URI
 TRACKING_URI = "http://127.0.0.1:8080/" # Use this link to access MLFlow logs
-EXPT_NAME = "HDB Resale Price - Elastic Net Regression"
-RUN_NAME = "Baseline"
+EXPT_NAME = "HDB Resale Price - SVR"
+RUN_NAME = "First hyperparameter tuning"
 RANDOM_STATE = 42
-K_FOLDS = 2
+K_FOLDS = 5
 VAR_NAMES = yaml.safe_load(open("config.yaml"))['data_feature_names']
-
-# Define the model hyperparameters
-params = {
-    "reg__l1_ratio": [0.5],
-    "reg__random_state": [RANDOM_STATE],
-}
+MODEL = SVR()  
+PARAMS = {
+    "reg__kernel": ["linear", "rbf"],
+    "reg__gamma": [0.1, 1, 10, 100],
+    "reg__C": [0.1, 1, 10, 100],
+} # model hyperparameters
 
 # # Setting up AWS connection
 # s3_input = boto3.resource('s3', region_name='ap-southeast-1')
@@ -67,7 +68,7 @@ def define_pipeline(df):
 
     pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
-        ('reg', ElasticNet())
+        ('reg', MODEL)
     ])
     
     return pipeline
@@ -82,10 +83,10 @@ def train_model(pipeline, df):
 
     grid_search = GridSearchCV(pipeline, 
                     cv=TimeSeriesSplit(n_splits=K_FOLDS), 
-                    param_grid=params, 
+                    param_grid=PARAMS, 
                     scoring='neg_root_mean_squared_error',
                     refit=True,
-                    verbose=1, 
+                    verbose=2, 
                     n_jobs=-1,
                     )
 
@@ -147,6 +148,7 @@ with mlflow.start_run(run_name=RUN_NAME, nested=True) as run:
     mlflow.log_figure(fi_plot, "feature_importance.png")
      
     # Calculate test score
+    print("Best run ID: ", mlflow.active_run().info.run_id)
     result = mlflow.models.evaluate(
         model="runs:/{}/model".format(mlflow.active_run().info.run_id),
         data=test_df,
