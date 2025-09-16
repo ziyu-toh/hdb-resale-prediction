@@ -189,3 +189,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# MLFlow
+/notebooks/mlruns/
+/mlruns/
+
+# AWS Layers for Lambda
+/aws_layers/

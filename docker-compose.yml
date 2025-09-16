@@ -1,0 +1,13 @@
+services:
+  streamlit:
+    image: app-streamlit
+    build:
+      dockerfile: ./app/streamlit/Dockerfile
+    ports:
+      - "8501:8501"
+  fastapi:
+    image: app-fastapi
+    build:
+      dockerfile: ./app/fastapi_app/Dockerfile
+    ports:
+      - "80:80"

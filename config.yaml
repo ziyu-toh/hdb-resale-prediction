@@ -1,0 +1,70 @@
+data_feature_names:
+  - flat_age_years
+  - floor_area_sqm
+  - flat_type
+  - flat_model_revised
+  - storey_range_grouped
+  - town
+  - days_from_earliest_data
+
+data_towns:
+  - Ang Mo Kio
+  - Bedok
+  - Bishan
+  - Bukit Batok
+  - Bukit Merah
+  - Bukit Panjang
+  - Bukit Timah
+  - Central Area
+  - Choa Chu Kang
+  - Clementi
+  - Geylang
+  - Hougang
+  - Jurong East
+  - Jurong West
+  - Kallang/Whampoa
+  - Marine Parade
+  - Pasir Ris
+  - Punggol
+  - Queenstown
+  - Sembawang
+  - Sengkang
+  - Serangoon
+  - Tampines
+  - Toa Payoh
+  - Woodlands
+  - Yishun
+
+data_flat_types:
+  - 1 Room
+  - 2 Room
+  - 3 Room
+  - 4 Room
+  - 5 Room
+  - Executive
+  - Multi-Generation
+
+data_flat_models:
+  - 2-Room
+  - 3gen
+  - Adjoined Flat
+  - Apartment
+  - Dbss
+  - Improved
+  - Maisonette
+  - Model A
+  - Model A2
+  - Multi Generation
+  - New Generation
+  - Premium Apartment
+  - Premium Apartment Loft
+  - Simplified
+  - Standard
+  - Terrace
+  - Type S1
+  - Type S2
+
+data_storey_range:
+  - '1-15'
+  - '16-30'
+  - '31+'

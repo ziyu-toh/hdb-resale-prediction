@@ -2,7 +2,7 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-PROJECT_NAME = bike-snowflake
+PROJECT_NAME = hdb-resale-prediction
 PYTHON_VERSION = 3.12
 PYTHON_INTERPRETER = python
 
@@ -14,14 +14,13 @@ PYTHON_INTERPRETER = python
 ## Install Python dependencies
 .PHONY: requirements
 requirements:
-	pip install -e .
-	
-
+	python -m pip install --upgrade pip
+	pip install -r requirements.txt
 
 
 ## Delete all compiled Python files
-.PHONY: clean
-clean:
+.PHONY: clean_py_files
+clean_py_files:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 
@@ -38,7 +37,10 @@ format:
 	ruff check --fix
 	ruff format
 
-
+## Perform data cleaning
+.PHONY: clean_data
+clean_data:
+	python src/data_processing.py
 
 ## Run tests
 .PHONY: test
