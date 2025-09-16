@@ -102,6 +102,12 @@ def split_dataset(df_all):
     
     return (train, test, deploy)
 
+def print_missing_counts(df_list):
+    df_list_names = ['train', 'test', 'deploy']
+    for i, df in enumerate(df_list):
+        missing_counts = df.isnull().sum(axis=0)
+        print(f"DataFrame {df_list_names[i]} missing value counts:\n{missing_counts}\n")
+
 # Output to AWS S3
 def output_to_s3(train, test, deploy):
     s3_output = boto3.resource('s3', region_name='ap-southeast-1')
@@ -119,6 +125,7 @@ if __name__ == "__main__":
     df_all = categorise_stories(df_all)
     df_all = convert_to_title_case(df_all)
     train, test, deploy = split_dataset(df_all)
+    print_missing_counts([train, test, deploy])
     output_to_s3(train, test, deploy)
 
     print("Data processing complete.")
