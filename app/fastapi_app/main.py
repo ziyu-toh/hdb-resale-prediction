@@ -1,12 +1,15 @@
-import pickle
+import joblib
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
+import boto3
 
-# Load champion model. Once dockerised, it has to be connected to the file path on docker
-# . refers to current WD, specified on Dockerfile
-with open('./app/fastapi_app/models/champion_model.pkl', 'rb') as f:
-    loaded_model = pickle.load(f)
+# Load model from s3 by downloading to tmp folder first. 
+# #Once dockerised, it has to be connected to the file path on docker
+s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+input_bucket = s3_input.Bucket('hdb-resale-best-model')
+input_bucket.download_file('champion_model.joblib', '/tmp/champion_model.joblib')
+loaded_model = joblib.load('/tmp/champion_model.joblib')
 
 # Define input data model
 class InputData(BaseModel):

@@ -9,6 +9,7 @@ from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
 import yaml
+import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import boto3
@@ -25,16 +26,13 @@ PARAM_DICT = {
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
 
-# # Setting up AWS connection
-# s3_input = boto3.resource('s3', region_name='ap-southeast-1')
-# input_bucket = s3_input.Bucket('hdb-resale-pred-processed')
+# Setting up AWS connection
+s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+input_bucket = s3_input.Bucket('hdb-resale-pred-processed')
 
-# # Load data
-# train_df = pd.read_csv(input_bucket.Object('train.csv').get()['Body'])
-
-# Use local training file instead while touching up on modelling
-train_df = pd.read_csv("data/processed/train.csv")[VAR_NAMES]
-test_df = pd.read_csv("data/processed/test.csv")[VAR_NAMES]
+# Load data
+train_df = pd.read_csv(input_bucket.Object('train.csv').get()['Body'])[VAR_NAMES]
+test_df = pd.read_csv(input_bucket.Object('test.csv').get()['Body'])[VAR_NAMES]
 
 # Define allowable values for flat model, flat type, and town
 with open("config.yaml", "r") as file:
@@ -140,3 +138,18 @@ fi_plot = plot_feature_importance(get_feature_importance(trained_grid_search, te
 # Calculate test score
 test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
 print(f"Test Score (RMSE): {-test_score}")
+
+# Output champion model
+joblib.dump(trained_grid_search.best_estimator_, 'tmp/champion_model.joblib')
+
+# Output best model to s3
+s3_output = boto3.client('s3')
+
+# Upload file to destination bucket
+print("Uploading file to destination bucket...")
+s3_output.upload_file("tmp/champion_model.joblib", 
+                      'hdb-resale-best-model', 
+                      'champion_model.joblib')
+
+print("File uploaded successfully.")
+

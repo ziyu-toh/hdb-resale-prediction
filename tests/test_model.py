@@ -1,6 +1,7 @@
 import numpy as np
-import pickle
+import joblib
 import pandas as pd
+import boto3
 
 def test_prediction():
     # Load data
@@ -12,12 +13,17 @@ def test_prediction():
                                 "days_from_earliest_data":[4323],
                                 "storey_range_grouped":["1-15"]})
     
-    with open('models/champion_model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    
-    # Prediction
-    pred = model.predict(sample_data)
+    # Load model from s3 by downloading to tmp folder first
+    s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+    input_bucket = s3_input.Bucket('hdb-resale-best-model')
+    input_bucket.download_file('champion_model.joblib', '/tmp/champion_model.joblib')
+    loaded_model = joblib.load('/tmp/champion_model.joblib')
 
-    assert model is not None, "No model found"
+    # Prediction
+    pred = loaded_model.predict(sample_data)
+    print("Prediction:", pred)
+
+    assert loaded_model is not None, "No model found"
     assert pred is not None, "No predictions made"
     assert isinstance(pred[0], np.float64), "Prediction is not a float"
+    
