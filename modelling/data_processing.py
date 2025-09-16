@@ -115,7 +115,8 @@ def output_to_s3(train, test, deploy):
     output_bucket.put_object(Key='train.csv', Body=train.to_csv(index=False))
     output_bucket.put_object(Key='test.csv', Body=test.to_csv(index=False))
     output_bucket.put_object(Key='deploy.csv', Body=deploy.to_csv(index=False))
-    
+
+# These should be under "def lambda_handler(event, context)" if using AWS Lambda
 if __name__ == "__main__":
     input_bucket = connect_to_s3()
     df_all = load_concat_df(input_bucket)
