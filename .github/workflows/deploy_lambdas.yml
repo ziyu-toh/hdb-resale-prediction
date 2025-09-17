@@ -27,6 +27,7 @@ jobs:
     - name: Deploy Lambda Function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
+        role: ${{ secrets.AWS_OIDC_ROLE }}
         function-name: hdb-resale-hyperparam-search
         code-artifacts-dir: modelling/hyperparam_search
         handler: index.handler
