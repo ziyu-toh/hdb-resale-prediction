@@ -3,6 +3,9 @@ name: Deploying AWS Lambda Functions
 on:
   push:
     branches: [ "main" ]
+    paths: 
+      - 'modelling/hyperparam_search/**'
+      - '.github/workflows/deploy_lambdas.yml'
 
 permissions:
   id-token: write   # This is required for OIDC authentication
@@ -27,7 +30,7 @@ jobs:
     - name: Deploy Lambda Function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
-        function-name: hdb-resale-hyperparam-search # Have to create this lambda function on AWS already
+        function-name: hdb-resale-hyperparam-search # Have to create this lambda function on AWS already.
         code-artifacts-dir: modelling/hyperparam_search
         handler: index.handler
         runtime: python3.12
