@@ -28,7 +28,7 @@ jobs:
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: hdb-resale-hyperparam-search
-        code-artifacts-dir: ./modelling/hyperparam_search.py
+        code-artifacts-dir: modelling/hyperparam_search.py
         handler: index.handler
         runtime: nodejs22.x
         # Add any additional inputs this action supports
