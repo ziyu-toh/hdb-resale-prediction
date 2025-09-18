@@ -146,7 +146,7 @@ def handler(event, context):
 
     # Upload file to destination bucket
     print("Uploading file to destination bucket...")
-    s3_output.upload_file("tmp/champion_model.joblib", 
+    s3_output.upload_file("champion_model.joblib", 
                         'hdb-resale-best-model', 
                         'champion_model.joblib')
 
