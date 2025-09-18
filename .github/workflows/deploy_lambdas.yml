@@ -45,3 +45,9 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         # Output the full image URI for the next step
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Update Lambda configuration
+      uses: aws-actions/aws-lambda-deploy@v1.1.0
+      with:
+        function-name: hdb-resale-hyperparam
+        image-uri: ${{ steps.build-image.outputs.image }}

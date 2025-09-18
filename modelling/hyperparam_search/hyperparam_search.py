@@ -139,7 +139,7 @@ def handler(event, context):
 
     # Output champion model
     print("Saving champion model...")
-    joblib.dump(trained_grid_search.best_estimator_, 'tmp/champion_model.joblib')
+    joblib.dump(trained_grid_search.best_estimator_, 'champion_model.joblib')
 
     # Output best model to s3
     s3_output = boto3.client('s3')
