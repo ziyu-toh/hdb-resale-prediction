@@ -27,16 +27,30 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r modelling/hyperparam_search/requirements.txt -t modelling/hyperparam_search/
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      # Authenticates with ECR and returns the registry URL for building images
 
-    - name: Deploy Lambda Function
-      uses: aws-actions/aws-lambda-deploy@v1.1.0
-      with:
-        function-name: hdb-resale-hyperparam-search # Have to create this lambda function on AWS already.
-        code-artifacts-dir: modelling/hyperparam_search
-        handler: hyperparam_search.lambda_handler
-        runtime: python3.12
-        # Add any additional inputs this action supports
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: zy/hdb-hyperparam-search
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build Docker image from Dockerfile in repository root
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # Push the built image to ECR repository
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        # Output the full image URI for the next step
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    # - name: Deploy Lambda function with container image
+    #   uses: aws-actions/aws-lambda-deploy@v1.1.0
+    #   with:
+    #     function-name: my-container-function
+    #     package-type: Image  # Required: Indicates container deployment (not zip)
+    #     image-uri: ${{ steps.build-image.outputs.image }}  # ECR image URI from previous step
+    #     role: arn:aws:iam::123456789012:role/lambda-role  # IAM execution role for Lambda
+    #     # Note: handler, runtime, and layers should not be provided for container images
