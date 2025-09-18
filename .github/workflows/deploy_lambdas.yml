@@ -37,7 +37,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: zy/hdb-hyperparam-search
-        IMAGE_TAG: :latest
+        IMAGE_TAG: latest
       run: |
         # Build Docker image from Dockerfile in repository root
         docker buildx build --platform linux/amd64 --provenance=false -f modelling/hyperparam_search/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
