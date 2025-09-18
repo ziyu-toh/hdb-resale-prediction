@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import boto3
 
-def lambda_handler(event, context):
+def handler(event, context):
     # Initialisation
     MODEL_NAME = "ElasticNet"
     RANDOM_STATE = 42
