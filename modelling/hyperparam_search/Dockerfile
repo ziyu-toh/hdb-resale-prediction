@@ -4,7 +4,7 @@ FROM public.ecr.aws/lambda/python:3.12
 COPY modelling/hyperparam_search/requirements.txt  ${LAMBDA_TASK_ROOT} 
 
 # install dependencies
-RUN pip3 install --user -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy function code
 COPY modelling/hyperparam_search/hyperparam_search.py ${LAMBDA_TASK_ROOT} 
