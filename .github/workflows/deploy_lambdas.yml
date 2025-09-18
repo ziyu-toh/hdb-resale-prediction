@@ -50,4 +50,6 @@ jobs:
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: hdb-resale-hyperparam
+        package-type: Image
         image-uri: ${{ steps.build-image.outputs.image }}
+        role: ${{ secrets.AWS_OIDC_ROLE }}
