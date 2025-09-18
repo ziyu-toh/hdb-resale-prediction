@@ -40,7 +40,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build Docker image from Dockerfile in repository root
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -f modelling/hyperparam_search/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         # Push the built image to ECR repository
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         # Output the full image URI for the next step
