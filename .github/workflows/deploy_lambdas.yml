@@ -32,4 +32,5 @@ jobs:
       with:
         function-name: hdb-resale-process-data
         code-artifacts-dir: modelling/data_processing
+        handler: data_processing.lambda_handler
 
