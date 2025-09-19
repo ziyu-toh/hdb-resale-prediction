@@ -18,6 +18,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12' 
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download best model artifact
+        run: |
+          aws s3 cp s3://hdb-resale-best-model/champion_model.joblib ./app/fastapi_app/champion_model/champion_model.joblib
+
       - name: Install Packages
         run: make requirements
       - name: Format
