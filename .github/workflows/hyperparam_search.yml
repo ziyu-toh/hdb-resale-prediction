@@ -1,2 +1,40 @@
-name: Hyperparameter Search and Model Training
+name: Perform hyperparameter search and deploy best model
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: 
+      - 'modelling/hyperparam_search/**'
+      - '.github/workflows/hyperparam_search.yml'
+
+permissions:
+  id-token: write   # This is required for OIDC authentication
+  contents: read    # This is required to checkout the repository
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
+        # The role should have a trust relationship with the GitHub OIDC provider
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r modelling/hyperparam_search/requirements.txt
+    
+    - name: Run hyperparameter search
+      run: |
+        python modelling/hyperparam_search/hyperparam_search.py
+
 
