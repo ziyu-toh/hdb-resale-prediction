@@ -119,6 +119,7 @@ def plot_feature_importance(importance_df):
     ax.set_ylabel("Feature")
     plt.tight_layout()
     plt.close(fig)
+    plt.savefig("fi_plot.png")
     
     return fig
 
@@ -135,7 +136,10 @@ fi_plot = plot_feature_importance(get_feature_importance(trained_grid_search, te
 # Calculate test score
 print("Calculating test score...")
 test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
-print(f"Test Score (RMSE): {-test_score}")
+
+# Output for CML
+with open("metrics.txt", "w") as outfile:
+    outfile.write("Test Score (RMSE): " + str(test_score) + "\n")
 
 # Output champion model
 print("Saving champion model...")
