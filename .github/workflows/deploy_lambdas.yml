@@ -33,4 +33,5 @@ jobs:
         function-name: hdb-resale-process-data
         code-artifacts-dir: modelling/data_processing
         handler: data_processing.lambda_handler
+        runtime: python3.12
 
