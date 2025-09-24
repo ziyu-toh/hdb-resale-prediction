@@ -144,9 +144,12 @@ if __name__ == "__main__":
     with open("metrics.txt", "w") as outfile:
         outfile.write("Test Score (RMSE): " + str(round(-test_score, 3)) + "\n")
         
-    with open("hyperparams.txt", "w") as outfile:
-        outfile.write("Hyperparameters: " + str(PARAM_DICT) + "\n")
-    
+    with open("hyperparams_tried.txt", "w") as outfile:
+        outfile.write("Hyperparameters tried: " + str(PARAM_DICT) + "\n")
+
+    with open("best_hyperparams.txt", "w") as outfile:
+        outfile.write("Best Hyperparameters: " + str(trained_grid_search.best_params_) + "\n")
+
     if OUTPUT_BEST_MODEL:
         # Output champion model
         print("Saving champion model...")

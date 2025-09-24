@@ -43,7 +43,7 @@ jobs:
       run: |
           # Post reports as comments in GitHub PRs
           echo "## Hyperparameters tried" >> report.md
-          cat hyperparams.txt >> report.md
+          cat hyperparams_tried.txt >> report.md
 
           echo "## Model metrics" >> report.md
           cat metrics.txt >> report.md
