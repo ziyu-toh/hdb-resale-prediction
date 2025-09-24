@@ -111,8 +111,8 @@ def plot_feature_importance(importance_df):
     ax.set_xlabel("Importance")
     ax.set_ylabel("Feature")
     plt.tight_layout()
-    plt.close(fig)
     plt.savefig("fi_plot.png")
+    plt.close(fig)
     
     return fig
 
@@ -142,8 +142,11 @@ if __name__ == "__main__":
 
     # Output for CML
     with open("metrics.txt", "w") as outfile:
-        outfile.write("Test Score (RMSE): " + str(round(test_score, 3)) + "\n")
-
+        outfile.write("Test Score (RMSE): " + str(round(-test_score, 3)) + "\n")
+        
+    with open("hyperparams.txt", "w") as outfile:
+        outfile.write("Hyperparameters: " + str(PARAM_DICT) + "\n")
+    
     if OUTPUT_BEST_MODEL:
         # Output champion model
         print("Saving champion model...")
