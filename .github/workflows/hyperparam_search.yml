@@ -45,6 +45,9 @@ jobs:
           echo "## Hyperparameters tried" >> report.md
           cat hyperparams_tried.txt >> report.md
 
+          echo "## Best hyperparameters" >> report.md
+          cat best_hyperparams.txt >> report.md
+
           echo "## Model metrics" >> report.md
           cat metrics.txt >> report.md
 
