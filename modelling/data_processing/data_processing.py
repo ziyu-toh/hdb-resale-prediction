@@ -95,6 +95,9 @@ def split_dataset(df_all):
         'resale_price'
     ]]
     
+    # Sort values by month
+    df_output = df_output.sort_values(by='month', ascending=True).reset_index(drop=True)
+
     # Split into train (2012-2023), test(2024) and deploy sets (2025)
     train = df_output[df_output['month'].dt.year.between(2012, 2023)].drop('month', axis=1)
     test = df_output[df_output['month'].dt.year == 2024].drop('month', axis=1)
