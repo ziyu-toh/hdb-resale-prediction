@@ -15,6 +15,7 @@ import boto3
 
 
 # Initialisation
+OUTPUT_BEST_MODEL = False
 MODEL_NAME = "ElasticNet"
 RANDOM_STATE = 42
 K_FOLDS = 5
@@ -24,14 +25,6 @@ PARAM_DICT = {
     "reg__alpha": [0.1, 0.5, 0.9],
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
-
-# Setting up AWS connection
-s3_input = boto3.resource('s3', region_name='ap-southeast-1')
-input_bucket = s3_input.Bucket('hdb-resale-pred-processed')
-
-# Load data
-train_df = pd.read_csv(input_bucket.Object('train.csv').get()['Body'])
-test_df = pd.read_csv(input_bucket.Object('test.csv').get()['Body'])
 
 # create sklearn pipeline with pre-processing of numerical and categorical features
 def define_pipeline(df):
@@ -123,36 +116,47 @@ def plot_feature_importance(importance_df):
     
     return fig
 
+if __name__ == "__main__":
+    # Setting up AWS connection
+    print("Setting up AWS connection...")
+    s3_input = boto3.resource('s3', region_name='ap-southeast-1')
+    input_bucket = s3_input.Bucket('hdb-resale-pred-processed')
 
-# Training model with the pipeline
-print("Training model with the pipeline...")
-trained_grid_search = train_model(pipeline=define_pipeline(train_df), df=train_df)
-cv_results = trained_grid_search.cv_results_
+    # Load data
+    print("Loading training data...")
+    train_df = pd.read_csv(input_bucket.Object('train.csv').get()['Body'])
+    test_df = pd.read_csv(input_bucket.Object('test.csv').get()['Body'])
 
-# Plot feature importances
-print("Plotting feature importances...")
-fi_plot = plot_feature_importance(get_feature_importance(trained_grid_search, test_df))
-    
-# Calculate test score
-print("Calculating test score...")
-test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
+    # Training model with the pipeline
+    print("Training model with the pipeline...")
+    trained_grid_search = train_model(pipeline=define_pipeline(train_df), df=train_df)
+    cv_results = trained_grid_search.cv_results_
 
-# Output for CML
-with open("metrics.txt", "w") as outfile:
-    outfile.write("Test Score (RMSE): " + str(test_score) + "\n")
+    # Plot feature importances
+    print("Plotting feature importances...")
+    fi_plot = plot_feature_importance(get_feature_importance(trained_grid_search, test_df))
+        
+    # Calculate test score
+    print("Calculating test score...")
+    test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
 
-# Output champion model
-print("Saving champion model...")
-joblib.dump(trained_grid_search.best_estimator_, '/tmp/champion_model.joblib')
+    # Output for CML
+    with open("metrics.txt", "w") as outfile:
+        outfile.write("Test Score (RMSE): " + str(round(test_score, 3)) + "\n")
 
-# Output best model to s3
-s3_output = boto3.client('s3')
+    if OUTPUT_BEST_MODEL:
+        # Output champion model
+        print("Saving champion model...")
+        joblib.dump(trained_grid_search.best_estimator_, '/tmp/champion_model.joblib')
 
-# Upload file to destination bucket
-print("Uploading file to destination bucket...")
-s3_output.upload_file("/tmp/champion_model.joblib", 
-                    'hdb-resale-best-model', 
-                    'champion_model.joblib')
+        # Output best model to s3
+        s3_output = boto3.client('s3')
 
-print("File uploaded successfully.")
+        # Upload best model to destination bucket
+        print("Uploading best model to destination bucket...")
+        s3_output.upload_file("/tmp/champion_model.joblib", 
+                            'hdb-resale-best-model', 
+                            'champion_model.joblib')
+
+        print("Best model uploaded successfully.")
 
