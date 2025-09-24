@@ -7,17 +7,14 @@ on:
       - 'modelling/hyperparam_search/**'
       - '.github/workflows/hyperparam_search.yml'
 
-permissions:
-  id-token: write   # This is required for OIDC authentication
-  contents: read    # This is required to checkout the repository
-
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      id-token: write # This is required for OIDC authentication
+      contents: write # This is required to checkout the repository
+      pull-requests: write # This is required to checkout the repository. Write permission grant read permission too
       repository-projects: write
 
     steps:
