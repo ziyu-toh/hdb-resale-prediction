@@ -4,7 +4,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import ElasticNet
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
@@ -91,11 +90,11 @@ def get_feature_importance(trained_grid_search, test_df):
     # Soring permutation importance results
     sorted_idx = r.importances_mean.argsort()[::-1]
     importance_df = pd.DataFrame({
-        'feature': best_pipeline[:-1].get_feature_names_out()[sorted_idx],
+        'feature': trained_grid_search.feature_names_in_[sorted_idx],
         'importance_mean': r.importances_mean[sorted_idx],
         'importance_std': r.importances_std[sorted_idx]
     })
-
+    
     return importance_df
 
 # Plot
