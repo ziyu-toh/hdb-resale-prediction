@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths: 
       - 'modelling/data_processing/**'
+      - 'modelling/data_pulling/**'
       - '.github/workflows/deploy_lambdas.yml'
 
 permissions:
@@ -27,6 +28,15 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
         # The role should have a trust relationship with the GitHub OIDC provider
+    
+    - name: Update hdb-resale-data-s3 Lambda function
+      uses: aws-actions/aws-lambda-deploy@v1.1.0
+      with:
+        function-name: hdb-resale-data-s3
+        code-artifacts-dir: modelling/data_pulling
+        handler: get_s3_data.lambda_handler
+        runtime: python3.12
+
     - name: Update hdb-resale-process-data Lambda function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
