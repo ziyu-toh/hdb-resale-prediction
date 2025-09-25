@@ -127,7 +127,7 @@ def lambda_handler(event, context):
     df_all = clean_flat_model(df_all)
     df_all = categorise_stories(df_all)
     df_all = convert_to_title_case(df_all)
-    train, test, deploy = split_dataset(df_all)
+    train, test = split_dataset(df_all)
     print_missing_counts([train, test])
     output_to_s3(train, test)
 
