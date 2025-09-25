@@ -98,26 +98,25 @@ def split_dataset(df_all):
     # Sort values by month
     df_output = df_output.sort_values(by='month', ascending=True).reset_index(drop=True)
 
-    # Split into train (2012-2023), test(2024) and deploy sets (2025)
-    train = df_output[df_output['month'].dt.year.between(2012, 2023)].drop('month', axis=1)
-    test = df_output[df_output['month'].dt.year == 2024].drop('month', axis=1)
-    deploy = df_output[df_output['month'].dt.year > 2024].drop('month', axis=1)
-    
-    return (train, test, deploy)
+    # Split into train (anything before the latest month) and test (latest month available) sets
+    latest_month = df_output['month'].max()
+    train = df_output[df_output['month'] < latest_month].drop('month', axis=1)
+    test = df_output[df_output['month'] == latest_month].drop('month', axis=1)
+
+    return (train, test)
 
 def print_missing_counts(df_list):
-    df_list_names = ['train', 'test', 'deploy']
+    df_list_names = ['train', 'test']
     for i, df in enumerate(df_list):
         missing_counts = df.isnull().sum(axis=0)
         print(f"DataFrame {df_list_names[i]} missing value counts:\n{missing_counts}\n")
 
 # Output to AWS S3
-def output_to_s3(train, test, deploy):
+def output_to_s3(train, test):
     s3_output = boto3.resource('s3', region_name='ap-southeast-1')
     output_bucket = s3_output.Bucket('hdb-resale-pred-processed')
     output_bucket.put_object(Key='train.csv', Body=train.to_csv(index=False))
     output_bucket.put_object(Key='test.csv', Body=test.to_csv(index=False))
-    output_bucket.put_object(Key='deploy.csv', Body=deploy.to_csv(index=False))
 
 # These should be under "def lambda_handler(event, context)" if using AWS Lambda
 def lambda_handler(event, context):
@@ -129,7 +128,7 @@ def lambda_handler(event, context):
     df_all = categorise_stories(df_all)
     df_all = convert_to_title_case(df_all)
     train, test, deploy = split_dataset(df_all)
-    print_missing_counts([train, test, deploy])
-    output_to_s3(train, test, deploy)
+    print_missing_counts([train, test])
+    output_to_s3(train, test)
 
     print("Data processing complete.")
