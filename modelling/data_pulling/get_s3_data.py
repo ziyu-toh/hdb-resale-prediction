@@ -28,10 +28,6 @@ def lambda_handler(event, context):
     # extract download URL from JSON response
     download_url = data["data"]["url"]
 
-    # Extract source bucket and key from obtained download URL
-    source_bucket = download_url.split("/", 4)[-2] 
-    source_key = download_url.split("/", 4)[-1]
-
     # Download file from source bucket
     print("Downloading file from source bucket...")
     try:
@@ -46,6 +42,11 @@ def lambda_handler(event, context):
 
     # Upload file to destination bucket
     print("Uploading file to destination bucket...")
-    s3.upload_file("/tmp/temp_file.csv", bucket_name, file_key)
-
+    try:
+        s3.upload_file("/tmp/temp_file.csv", bucket_name, file_key)
+    
+    except Exception as e:
+        print("Error occurred while uploading the file:", e)
+        raise
+    
     print("File uploaded successfully.")
