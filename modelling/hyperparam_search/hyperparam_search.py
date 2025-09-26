@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import ElasticNet
+from sklearn.svm import LinearSVR
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
@@ -15,13 +15,13 @@ import boto3
 
 # Initialisation
 OUTPUT_BEST_MODEL = False
-MODEL_NAME = "ElasticNet"
+MODEL_NAME = "LinearSVR"
 RANDOM_STATE = 42
 K_FOLDS = 5
-MODEL = ElasticNet()  
+MODEL = LinearSVR()
 PARAM_DICT = {
-    "reg__l1_ratio": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
-    "reg__alpha": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
+    "reg__C": [0.001, 0.01, 0.1, 1, 10, 100],
+    "reg__loss": ["epsilon_insensitive", "squared_epsilon_insensitive"],
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
 
