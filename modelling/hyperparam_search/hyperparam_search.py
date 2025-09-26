@@ -140,14 +140,17 @@ if __name__ == "__main__":
     test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
 
     # Output for CML
-    with open("metrics.txt", "w") as outfile:
-        outfile.write("Test Score (RMSE): " + str(round(-test_score, 3)) + "\n")
+    with open("train_metrics.txt", "w") as outfile:
+        outfile.write(str(round(trained_grid_search.best_score_, 3)) + "\n")
+    
+    with open("test_metrics.txt", "w") as outfile:
+        outfile.write(str(round(-test_score, 3)) + "\n")
         
     with open("hyperparams_tried.txt", "w") as outfile:
-        outfile.write("Hyperparameters tried: " + str(PARAM_DICT) + "\n")
+        outfile.write(str(PARAM_DICT) + "\n")
 
     with open("best_hyperparams.txt", "w") as outfile:
-        outfile.write("Best Hyperparameters: " + str(trained_grid_search.best_params_) + "\n")
+        outfile.write(str(trained_grid_search.best_params_) + "\n")
 
     if OUTPUT_BEST_MODEL:
         # Output champion model
@@ -160,8 +163,8 @@ if __name__ == "__main__":
         # Upload best model to destination bucket
         print("Uploading best model to destination bucket...")
         s3_output.upload_file("/tmp/champion_model.joblib", 
-                            'hdb-resale-best-model', 
-                            'champion_model.joblib')
+                              'hdb-resale-best-model', 
+                              'champion_model.joblib')
 
         print("Best model uploaded successfully.")
 

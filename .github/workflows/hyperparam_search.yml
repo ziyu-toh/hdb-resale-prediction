@@ -48,10 +48,13 @@ jobs:
           echo "## Best hyperparameters" >> report.md
           cat best_hyperparams.txt >> report.md
 
-          echo "## Model metrics" >> report.md
-          cat metrics.txt >> report.md
+          echo "## Mean cross-validated score of the best_estimator" >> report.md
+          cat train_metrics.txt >> report.md
 
-          echo "## Feature importance plot" >> report.md
+          echo "## Test set score of the best estimator" >> report.md
+          cat test_metrics.txt >> report.md
+
+          echo "## Feature importance plot of the best estimator" >> report.md
           echo "![](./fi_plot.png)" >> report.md
 
           cml comment create report.md
