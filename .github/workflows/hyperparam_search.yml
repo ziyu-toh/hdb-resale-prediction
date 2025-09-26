@@ -2,7 +2,7 @@ name: Perform hyperparameter search and deploy best model with CML
 
 on:
   push:
-    branches: [ "main", "experimental"]
+    branches: [ "main", "tuning"]
     paths: 
       - 'modelling/hyperparam_search/**'
       - '.github/workflows/hyperparam_search.yml'
