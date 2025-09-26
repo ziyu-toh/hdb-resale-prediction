@@ -20,8 +20,8 @@ RANDOM_STATE = 42
 K_FOLDS = 5
 MODEL = ElasticNet()  
 PARAM_DICT = {
-    "reg__l1_ratio": [0.1, 0.5, 0.9],
-    "reg__alpha": [0.1, 0.5, 0.9],
+    "reg__l1_ratio": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
+    "reg__alpha": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
 
