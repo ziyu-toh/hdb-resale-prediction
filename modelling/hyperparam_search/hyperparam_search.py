@@ -20,7 +20,7 @@ RANDOM_STATE = 42
 K_FOLDS = 5
 MODEL = RandomForestRegressor()
 PARAM_DICT = {
-    "reg__n_estimators": [50, 250, 500],
+    "reg__n_estimators": [50, 100, 250],
     "reg__max_features": [0.25, 0.5, 0.75],
     "reg__max_depth": [5, 25, 50],
     "reg__min_samples_split": [5, 10, 20],
