@@ -22,10 +22,10 @@ MODEL = RandomForestRegressor()
 PARAM_DICT = {
     "reg__n_estimators": [50, 100, 250],
     "reg__max_features": [0.25, 0.5, 0.75],
-    "reg__max_depth": [5, 25, 50],
-    "reg__min_samples_split": [5, 10, 20],
-    "reg__min_samples_leaf": [2, 5, 10],
-    "reg__criterion": ["squared_error", "friedman_mse"],
+    "reg__max_depth": [5, 10, 25],
+    "reg__min_samples_split": [10, 20],
+    "reg__min_samples_leaf": [5, 10],
+    "reg__criterion": ["squared_error"],
     "reg__n_jobs": [-1],
     
     "reg__random_state": [RANDOM_STATE],
