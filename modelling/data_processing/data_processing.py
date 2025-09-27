@@ -13,7 +13,6 @@ def load_concat_df(input_bucket):
     # Load data
     df_list = []
     for obj in input_bucket.objects.all():
-        key = obj.key
         body = obj.get()['Body']
 
         df = pd.read_csv(body, dtype=str)
@@ -100,23 +99,28 @@ def split_dataset(df_all):
 
     # Split into train (anything before the latest month) and test (latest month available) sets
     latest_month = df_output['month'].max()
-    train = df_output[df_output['month'] < latest_month].drop('month', axis=1)
-    test = df_output[df_output['month'] == latest_month].drop('month', axis=1)
+    month_before_latest_month = latest_month - pd.DateOffset(months=1)
+    print("Month before latest month:", month_before_latest_month)
+    train = df_output[df_output['month'] < month_before_latest_month].drop('month', axis=1)
+    test = df_output[df_output['month'] == month_before_latest_month].drop('month', axis=1)
+    retrain_test = df_output[df_output['month'] == latest_month].drop('month', axis=1)  
+    print(f"Train set: {train.shape}, Test set: {test.shape}, Retrain test set: {retrain_test.shape}")
 
-    return (train, test)
+    return (train, test, retrain_test)
 
 def print_missing_counts(df_list):
-    df_list_names = ['train', 'test']
+    df_list_names = ['train', 'test', 'retrain_test']
     for i, df in enumerate(df_list):
         missing_counts = df.isnull().sum(axis=0)
         print(f"DataFrame {df_list_names[i]} missing value counts:\n{missing_counts}\n")
 
 # Output to AWS S3
-def output_to_s3(train, test):
+def output_to_s3(train, test, retrain_test):
     s3_output = boto3.resource('s3', region_name='ap-southeast-1')
     output_bucket = s3_output.Bucket('hdb-resale-pred-processed')
     output_bucket.put_object(Key='train.csv', Body=train.to_csv(index=False))
     output_bucket.put_object(Key='test.csv', Body=test.to_csv(index=False))
+    output_bucket.put_object(Key='retrain_test.csv', Body=retrain_test.to_csv(index=False))
 
 # These should be under "def lambda_handler(event, context)" if using AWS Lambda
 def lambda_handler(event, context):
@@ -127,8 +131,8 @@ def lambda_handler(event, context):
     df_all = clean_flat_model(df_all)
     df_all = categorise_stories(df_all)
     df_all = convert_to_title_case(df_all)
-    train, test = split_dataset(df_all)
-    print_missing_counts([train, test])
-    output_to_s3(train, test)
+    train, test, retrain_test = split_dataset(df_all)
+    print_missing_counts([train, test, retrain_test])
+    output_to_s3(train, test, retrain_test)
 
     print("Data processing complete.")
