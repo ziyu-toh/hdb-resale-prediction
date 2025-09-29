@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import ElasticNet
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
@@ -14,14 +14,20 @@ import boto3
 
 
 # Initialisation
-OUTPUT_BEST_MODEL = False
-MODEL_NAME = "ElasticNet"
+OUTPUT_BEST_MODEL = True
+MODEL_NAME = "RandomForestRegressor"
 RANDOM_STATE = 42
 K_FOLDS = 5
-MODEL = ElasticNet()  
+MODEL = RandomForestRegressor()
 PARAM_DICT = {
-    "reg__l1_ratio": [0.1, 0.5, 0.9],
-    "reg__alpha": [0.1, 0.5, 0.9],
+    "reg__n_estimators": [125],
+    "reg__max_features": [0.75],
+    "reg__max_depth": [10],
+    "reg__min_samples_split": [10],
+    "reg__min_samples_leaf": [5],
+    "reg__criterion": ["squared_error"],
+    "reg__n_jobs": [-1],
+    
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
 
@@ -140,14 +146,17 @@ if __name__ == "__main__":
     test_score = trained_grid_search.score(test_df.drop(columns=['resale_price']), test_df['resale_price'])
 
     # Output for CML
-    with open("metrics.txt", "w") as outfile:
-        outfile.write("Test Score (RMSE): " + str(round(-test_score, 3)) + "\n")
+    with open("train_metrics.txt", "w") as outfile:
+        outfile.write(str(round(trained_grid_search.best_score_, 3)) + "\n")
+    
+    with open("test_metrics.txt", "w") as outfile:
+        outfile.write(str(round(-test_score, 3)) + "\n")
         
     with open("hyperparams_tried.txt", "w") as outfile:
-        outfile.write("Hyperparameters tried: " + str(PARAM_DICT) + "\n")
+        outfile.write(str(PARAM_DICT) + "\n")
 
     with open("best_hyperparams.txt", "w") as outfile:
-        outfile.write("Best Hyperparameters: " + str(trained_grid_search.best_params_) + "\n")
+        outfile.write(str(trained_grid_search.best_params_) + "\n")
 
     if OUTPUT_BEST_MODEL:
         # Output champion model
@@ -160,8 +169,8 @@ if __name__ == "__main__":
         # Upload best model to destination bucket
         print("Uploading best model to destination bucket...")
         s3_output.upload_file("/tmp/champion_model.joblib", 
-                            'hdb-resale-best-model', 
-                            'champion_model.joblib')
+                              'hdb-resale-best-model', 
+                              'champion_model.joblib')
 
         print("Best model uploaded successfully.")
 
