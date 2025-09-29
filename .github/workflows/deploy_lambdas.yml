@@ -6,6 +6,7 @@ on:
     paths: 
       - 'modelling/data_processing/**'
       - 'modelling/data_pulling/**'
+      - 'modelling/retrain_best_model/**'
       - '.github/workflows/deploy_lambdas.yml'
 
 permissions:
@@ -45,3 +46,10 @@ jobs:
         handler: data_processing.lambda_handler
         runtime: python3.12
 
+    - name: Update hdb-resale-retraining Lambda function
+      uses: aws-actions/aws-lambda-deploy@v1.1.0
+      with:
+        function-name: hdb-resale-retraining
+        code-artifacts-dir: modelling/retrain_best_model
+        handler: retrain_best_model.lambda_handler
+        runtime: python3.12

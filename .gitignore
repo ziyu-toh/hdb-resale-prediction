@@ -194,8 +194,9 @@ cython_debug/
 /notebooks/mlruns/
 /mlruns/
 
-# AWS Layers for Lambda
+# AWS Layers and tmp for Lambda
 /aws_layers/
+/tmp/
 
 # ML artifacts
 /mlartifacts/
