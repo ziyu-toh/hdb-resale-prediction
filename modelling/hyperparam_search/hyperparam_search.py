@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import ElasticNet
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
 
@@ -14,14 +14,20 @@ import boto3
 
 
 # Initialisation
-OUTPUT_BEST_MODEL = False
-MODEL_NAME = "ElasticNet"
+OUTPUT_BEST_MODEL = True
+MODEL_NAME = "RandomForestRegressor"
 RANDOM_STATE = 42
 K_FOLDS = 5
-MODEL = ElasticNet()  
+MODEL = RandomForestRegressor()
 PARAM_DICT = {
-    "reg__l1_ratio": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
-    "reg__alpha": [0.05, 0.2, 0.4, 0.6, 0.8, 0.95],
+    "reg__n_estimators": [125],
+    "reg__max_features": [0.75],
+    "reg__max_depth": [10],
+    "reg__min_samples_split": [10],
+    "reg__min_samples_leaf": [5],
+    "reg__criterion": ["squared_error"],
+    "reg__n_jobs": [-1],
+    
     "reg__random_state": [RANDOM_STATE],
 } # model hyperparameters
 
