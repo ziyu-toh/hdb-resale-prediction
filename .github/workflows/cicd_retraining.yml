@@ -25,8 +25,6 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
         aws-region: ${{ secrets.AWS_REGION }}
-        # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
-        # The role should have a trust relationship with the GitHub OIDC provider
 
     - name: Build docker image for retraining and upload to AWS ECR
       id: login-ecr
@@ -35,14 +33,14 @@ jobs:
     - name: Delete previous latest image from ECR (if exists), and build and push new image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY_RETRAINING }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_RETRAINING }}
         IMAGE_TAG: latest
       run: |
         # Delete previous latest image from ECR (if exists)
         aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG || echo "No previous image to delete"
         
         # Build Docker image from Dockerfile in repository root
-        docker buildx build --platform linux/amd64 --provenance=false -f modelling/retrain_best_model/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -f modelling/retrain_best_model/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         
         # Push the built image to ECR repository
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
