@@ -2,10 +2,8 @@ name: Deploying AWS Lambda Functions
 
 on:
   push:
-    branches: [ "main", "tuning", "retraining"]
+    branches: [ "main", "retraining"]
     paths: 
-      - 'modelling/data_processing/**'
-      - 'modelling/data_pulling/**'
       - 'modelling/retrain_best_model/**'
       - '.github/workflows/deploy_lambdas.yml'
 
@@ -29,22 +27,6 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
         # The role should have a trust relationship with the GitHub OIDC provider
-    
-    - name: Update hdb-resale-data-s3 Lambda function
-      uses: aws-actions/aws-lambda-deploy@v1.1.0
-      with:
-        function-name: hdb-resale-data-s3
-        code-artifacts-dir: modelling/data_pulling
-        handler: get_s3_data.lambda_handler
-        runtime: python3.12
-
-    - name: Update hdb-resale-process-data Lambda function
-      uses: aws-actions/aws-lambda-deploy@v1.1.0
-      with:
-        function-name: hdb-resale-process-data
-        code-artifacts-dir: modelling/data_processing
-        handler: data_processing.lambda_handler
-        runtime: python3.12
 
     - name: Update hdb-resale-retraining Lambda function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
@@ -53,3 +35,5 @@ jobs:
         code-artifacts-dir: modelling/retrain_best_model
         handler: retrain_best_model.lambda_handler
         runtime: python3.12
+
+    
