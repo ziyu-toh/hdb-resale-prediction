@@ -2,11 +2,10 @@ name: Deploying AWS Lambda Functions
 
 on:
   push:
-    branches: [ "main", "tuning"]
+    branches: [ "main", "data_preproc"]
     paths: 
       - 'modelling/data_processing/**'
       - 'modelling/data_pulling/**'
-      - 'modelling/retrain_best_model/**'
       - '.github/workflows/deploy_lambdas.yml'
 
 permissions:
