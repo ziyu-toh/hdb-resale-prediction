@@ -1,3 +1,4 @@
+# Download packages with no deps, and zip it. Upload to AWS Lambda as a layer, and attach it to the retraining function in addition to the default AWS layer with pandas.
 scikit-learn==1.7.1
 boto3==1.40.17
 joblib==1.5.1

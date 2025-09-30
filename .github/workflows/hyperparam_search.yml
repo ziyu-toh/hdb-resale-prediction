@@ -26,8 +26,6 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
         aws-region: ${{ secrets.AWS_REGION }}
-        # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
-        # The role should have a trust relationship with the GitHub OIDC provider
     - name: Set up CML
       uses: iterative/setup-cml@v1
 

@@ -2,7 +2,7 @@ name: Deploying AWS Lambda Functions
 
 on:
   push:
-    branches: [ "main", "tuning"]
+    branches: [ "main", "tuning", "retraining"]
     paths: 
       - 'modelling/data_processing/**'
       - 'modelling/data_pulling/**'

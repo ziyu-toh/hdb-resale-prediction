@@ -4,6 +4,8 @@ on:
     branches: [ "main"]
     paths: 
       - 'app/**'
+      - 'modelling/hyperparam_search/**'
+      - 'modelling/retrain_best_model/**'
       - '.github/workflows/cicd.yml'
   pull_request:
     branches: [ "main" ]
@@ -14,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # - uses: iterative/setup-cml@v2 # To implement next time
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12' 
@@ -31,8 +32,10 @@ jobs:
 
       - name: Install Packages
         run: make requirements
+        
       - name: Format
         run: make format
+
       - name: Test
         run: make test
 
