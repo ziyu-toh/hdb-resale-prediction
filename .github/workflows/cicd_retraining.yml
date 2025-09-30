@@ -5,7 +5,7 @@ on:
     branches: [ "main", "retraining"]
     paths: 
       - 'modelling/retrain_best_model/**'
-      - '.github/workflows/deploy_lambdas.yml'
+      - '.github/workflows/cicd_retraining.yml'
 
 permissions:
   id-token: write   # This is required for OIDC authentication
