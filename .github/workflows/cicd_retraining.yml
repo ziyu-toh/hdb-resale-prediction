@@ -28,12 +28,31 @@ jobs:
         # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
         # The role should have a trust relationship with the GitHub OIDC provider
 
+    - name: Build docker image for retraining and upload to AWS ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Delete previous latest image from ECR (if exists), and build and push new image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY_RETRAINING }}
+        IMAGE_TAG: latest
+      run: |
+        # Delete previous latest image from ECR (if exists)
+        aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG || echo "No previous image to delete"
+        
+        # Build Docker image from Dockerfile in repository root
+        docker buildx build --platform linux/amd64 --provenance=false -f modelling/retrain_best_model/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # Push the built image to ECR repository
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        # Output the full image URI for the next step
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
     - name: Update hdb-resale-retraining Lambda function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: hdb-resale-retraining
+        package-type: Image
+        image-uri: ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY_RETRAINING }}:latest
         code-artifacts-dir: modelling/retrain_best_model
-        handler: retrain_best_model.lambda_handler
-        runtime: python3.12
-
-    
+        role: ${{ secrets.AWS_OIDC_ROLE }}
