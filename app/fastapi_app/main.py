@@ -3,8 +3,8 @@ import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# Load model from s3 by downloading to tmp folder first. 
-# #Once dockerised, it has to be connected to the file path on docker
+# Load model from local path. The model will be downloaded using the cicd_app_model.yml workflow
+# If using docker-compose up, have to use the cli to download the model first.
 loaded_model = joblib.load('./app/fastapi_app/champion_model/champion_model.joblib')
 
 # Define input data model
