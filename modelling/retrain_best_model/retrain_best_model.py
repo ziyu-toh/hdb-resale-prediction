@@ -42,7 +42,4 @@ def lambda_handler(event, context):
     #     s3.upload_file("/tmp/challenger_model.joblib", 
     #                   'hdb-resale-best-model', 
     #                   'champion_model.joblib')
-    #     print("Challenger model uploaded successfully.")
-
-    # else:
-    #     print("Champion model is better with score of: ", champion_rmse, " vs ", challenger_rmse)
+    #     print("Challenger model uploaded and updated successfully.")
