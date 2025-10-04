@@ -27,9 +27,9 @@ def load_concat_df(input_bucket):
 
 def convert_variable_type(df_all):
     # Convert variables to appropriate types
-    df_all['resale_price'] = pd.to_numeric(df_all['resale_price'], errors='coerce')
+    df_all['resale_price'] = pd.to_numeric(df_all['resale_price'], errors='coerce').astype('Int64')
     df_all['lease_commence_date'] = pd.to_numeric(df_all['lease_commence_date'], errors='coerce').astype('Int64')
-    df_all['floor_area_sqm'] = pd.to_numeric(df_all['floor_area_sqm'], errors='coerce')
+    df_all['floor_area_sqm'] = pd.to_numeric(df_all['floor_area_sqm'], errors='coerce').astype('Int64')
     df_all['month'] = pd.to_datetime(df_all['month'], format='%Y-%m')
     
     return df_all
@@ -132,6 +132,9 @@ def lambda_handler(event, context):
     df_all = categorise_stories(df_all)
     df_all = convert_to_title_case(df_all)
     train, test, retrain_test = split_dataset(df_all)
+    
+    assert min(train.shape[0], test.shape[0], retrain_test.shape[0]) > 0, "One of the datasets is empty!"
+    
     print_missing_counts([train, test, retrain_test])
     output_to_s3(train, test, retrain_test)
 
