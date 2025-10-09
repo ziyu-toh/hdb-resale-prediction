@@ -23,13 +23,16 @@ def load_concat_df(input_bucket):
     # Combine dataframes into a single dataframe
     df_all = pd.concat(df_list, ignore_index=True, sort=False)
     
+    # Check that the variables are consistent with previous runs
+    assert set(df_all.columns) == {"month", "town", "flat_type", "block", "street_name", "storey_range", "flat_model", "lease_commence_date", "floor_area_sqm", "remaining_lease", "resale_price"}, "Different columns in freshly pulled data"
+    
     return df_all 
 
 def convert_variable_type(df_all):
     # Convert variables to appropriate types
-    df_all['resale_price'] = pd.to_numeric(df_all['resale_price'], errors='coerce').astype('Int64')
-    df_all['lease_commence_date'] = pd.to_numeric(df_all['lease_commence_date'], errors='coerce').astype('Int64')
-    df_all['floor_area_sqm'] = pd.to_numeric(df_all['floor_area_sqm'], errors='coerce').astype('Int64')
+    df_all['resale_price'] = pd.to_numeric(df_all['resale_price'], errors='coerce')
+    df_all['lease_commence_date'] = pd.to_numeric(df_all['lease_commence_date'], errors='coerce')
+    df_all['floor_area_sqm'] = pd.to_numeric(df_all['floor_area_sqm'], errors='coerce')
     df_all['month'] = pd.to_datetime(df_all['month'], format='%Y-%m')
     
     return df_all
@@ -134,8 +137,12 @@ def lambda_handler(event, context):
     train, test, retrain_test = split_dataset(df_all)
     
     assert min(train.shape[0], test.shape[0], retrain_test.shape[0]) > 0, "One of the datasets is empty!"
-    
+
     print_missing_counts([train, test, retrain_test])
     output_to_s3(train, test, retrain_test)
 
     print("Data processing complete.")
+    
+    
+if __name__ == "__main__":
+    lambda_handler(None, None)

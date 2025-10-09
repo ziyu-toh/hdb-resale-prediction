@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 import numpy as np
 import pytest
 
@@ -45,9 +46,9 @@ def test_convert_variable_type(sample_raw_df):
     assert isinstance(sample_raw_df, pd.DataFrame), "Input is not a DataFrame"
     
     proc_df = convert_variable_type(sample_raw_df)
-    assert proc_df["resale_price"].dtype == 'Int64', "resale_price not converted to Int64"
-    assert proc_df["lease_commence_date"].dtype == 'Int64', "lease_commence_date not converted to Int64"
-    assert proc_df["floor_area_sqm"].dtype == 'Int64', "floor_area_sqm not converted to Int64"
+    assert is_numeric_dtype(proc_df["resale_price"]), "resale_price not converted to numeric"
+    assert is_numeric_dtype(proc_df["lease_commence_date"]), "lease_commence_date not converted to numeric"
+    assert is_numeric_dtype(proc_df["floor_area_sqm"]), "floor_area_sqm not converted to numeric"
     assert proc_df["month"].dtype.str == "<M8[ns]", "month not converted to datetime"
     
 def test_calculate_time_variables(sample_raw_df):
