@@ -1,4 +1,4 @@
-name: Continuous Integration & Deployment
+name: Continuous Integration & Deployment for Streamlit and FastAPI
 on:
   push:
     branches: [ "main", "app_dev"]
@@ -6,7 +6,7 @@ on:
       - 'app/**'
       - 'modelling/hyperparam_search/**'
       - 'modelling/retrain_best_model/**'
-      - '.github/workflows/cicd.yml'
+      - '.github/workflows/cicd_app_model.yml'
   pull_request:
     branches: [ "main" ]
   

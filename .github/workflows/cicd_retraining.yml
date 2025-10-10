@@ -1,4 +1,4 @@
-name: Deploying AWS Lambda Functions
+name: Deploying AWS Lambda Functions for Model Retraining
 
 on:
   push:

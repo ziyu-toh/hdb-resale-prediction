@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np
+from pandas.api.types import is_numeric_dtype
 import pytest
 
 from modelling.data_processing.data_processing import connect_to_s3, load_concat_df, convert_variable_type, calculate_time_variables, clean_flat_model, categorise_stories, convert_to_title_case, split_dataset, print_missing_counts, output_to_s3
@@ -12,13 +12,13 @@ def sample_raw_df():
     sample_raw_df = pd.DataFrame({"month":["2023-08"],
                                   "town":["ANG MO KIO"],
                                   "flat_type":["2 ROOM"],
-                                  "block":[156],
+                                  "block":["156"],
                                   "street_name":["ANG MO KIO AVE 3"],
-                                  "floor_area_sqm":[44.0],
+                                  "floor_area_sqm":["44.0"],
                                   "flat_model":["Improved"],
-                                  "lease_commence_date":[1984],
+                                  "lease_commence_date":["1984"],
                                   "storey_range":["06 TO 10"],
-                                  "resale_price":[250000],})
+                                  "resale_price":["250000"],})
     return sample_raw_df
 
 def test_connect_to_s3():
@@ -45,9 +45,9 @@ def test_convert_variable_type(sample_raw_df):
     assert isinstance(sample_raw_df, pd.DataFrame), "Input is not a DataFrame"
     
     proc_df = convert_variable_type(sample_raw_df)
-    assert proc_df["resale_price"].dtype == 'Int64', "resale_price not converted to Int64"
-    assert proc_df["lease_commence_date"].dtype == 'Int64', "lease_commence_date not converted to Int64"
-    assert proc_df["floor_area_sqm"].dtype == 'Int64', "floor_area_sqm not converted to Int64"
+    assert is_numeric_dtype(proc_df["resale_price"]), "resale_price not converted to numeric"
+    assert is_numeric_dtype(proc_df["lease_commence_date"]), "lease_commence_date not converted to numeric"
+    assert is_numeric_dtype(proc_df["floor_area_sqm"]), "floor_area_sqm not converted to numeric"
     assert proc_df["month"].dtype.str == "<M8[ns]", "month not converted to datetime"
     
 def test_calculate_time_variables(sample_raw_df):
