@@ -26,6 +26,10 @@ def load_concat_df(input_bucket):
     # Check that the variables are consistent with previous runs
     assert set(df_all.columns) == {"month", "town", "flat_type", "block", "street_name", "storey_range", "flat_model", "lease_commence_date", "floor_area_sqm", "remaining_lease", "resale_price"}, "Different columns in freshly pulled data"
     
+    # Check no missing values in key columns
+    key_cols = ['month', 'town', 'flat_type', 'storey_range', 'flat_model', 'lease_commence_date', 'floor_area_sqm', 'resale_price']
+    assert df_all[key_cols].isnull().sum().sum() == 0, "Missing values in key columns"
+    
     return df_all 
 
 def convert_variable_type(df_all):
@@ -142,7 +146,6 @@ def lambda_handler(event, context):
     output_to_s3(train, test, retrain_test)
 
     print("Data processing complete.")
-    
     
 if __name__ == "__main__":
     lambda_handler(None, None)
