@@ -1,4 +1,4 @@
-name: Continuous Integration & Deployment
+name: Continuous Integration & Deployment for Streamlit and FastAPI
 on:
   push:
     branches: [ "main", "app_dev"]
