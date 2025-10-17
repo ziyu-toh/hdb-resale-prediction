@@ -4,8 +4,7 @@ on:
     branches: [ "main", "app_dev"]
     paths: 
       - 'app/**'
-      - 'modelling/hyperparam_search/**'
-      - 'modelling/retrain_best_model/**'
+      - 'modelling/hyperparam_search/**' # For when model changes, need to rebuild containers
       - '.github/workflows/cicd_app_model.yml'
   pull_request:
     branches: [ "main" ]
