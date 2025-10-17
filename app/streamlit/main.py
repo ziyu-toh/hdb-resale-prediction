@@ -22,7 +22,7 @@ flat_model_revised = st.selectbox("Flat Model (Revised)", config["data_flat_mode
 town = st.selectbox("Town", config["data_towns"])
 
 if st.button("Submit"):
-    fastapi_url = "http://localhost:80/predict" # "http://54.169.110.104:80/predict" 
+    fastapi_url = "http://fastapi:80/predict" 
     payload = {
         "flat_age_years": flat_age_years,
         "floor_area_sqm": floor_area_sqm,

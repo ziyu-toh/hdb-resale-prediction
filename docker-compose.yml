@@ -1,13 +1,22 @@
 services:
-  streamlit:
-    image: app-streamlit
-    build:
-      dockerfile: ./app/streamlit/Dockerfile
-    ports:
-      - "8501:8501"
   fastapi:
-    image: app-fastapi
     build:
       dockerfile: ./app/fastapi_app/Dockerfile
     ports:
       - "80:80"
+    networks:
+      - app_network
+
+  streamlit:
+    build:
+      dockerfile: ./app/streamlit/Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - fastapi # Ensures backend starts before frontend
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
