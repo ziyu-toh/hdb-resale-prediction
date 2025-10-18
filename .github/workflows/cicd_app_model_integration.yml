@@ -1,0 +1,32 @@
+name: Docker Compose CI for App Model Integration Tests
+
+on:
+  push:
+    branches: ["main", "tests"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v2
+        with:
+          version: 'latest' 
+
+      - name: Start Docker Compose services
+        run: docker compose up -d
+
+      # Add further steps here, e.g., running tests against the services
+      - name: Run tests
+        run: |
+          # Example: wait for a service to be ready and then run tests
+          echo "Waiting for service to be ready..."
+          sleep 10
+          # Your test commands here
+
+      - name: Stop Docker Compose services
+        if: always() # Ensures this step runs even if previous steps fail
+        run: docker compose down
