@@ -5,14 +5,14 @@ on:
     branches: ["main", "tests"]
 
 jobs:
-  build-and-test:
+  compose-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v2
+        uses: docker/setup-compose-action@v1
         with:
           version: 'latest' 
 
