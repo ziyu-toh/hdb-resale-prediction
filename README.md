@@ -36,7 +36,5 @@ The data is obtained from [data.gov](https://data.gov.sg/collections/189/view), 
 Overview of tech stack used: Python 3.12, AWS (S3, Lambda, Eventbridge, ECS, ECR), Docker, Github Actions, CML
 
 ## To-Do
-- Reinforce CI/CD workflows and tests.
-- Add data/concept drift thresholds on top of 5% performance difference for continuous training script.
 - Engineer more features and include feature selection mechanisms
 - Implement logging
