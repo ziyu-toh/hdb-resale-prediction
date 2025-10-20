@@ -10,6 +10,8 @@ services:
   streamlit:
     build:
       dockerfile: ./app/streamlit/Dockerfile
+    environment:
+      - RUNNING_IN_DOCKER_COMPOSE=True
     ports:
       - "8501:8501"
     depends_on:

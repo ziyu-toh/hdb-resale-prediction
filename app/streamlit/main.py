@@ -3,6 +3,7 @@ import streamlit as st
 import requests
 import yaml
 from datetime import datetime, date
+import os
 
 st.title("HDB Resale Price Predictor")
 
@@ -22,7 +23,12 @@ flat_model_revised = st.selectbox("Flat Model (Revised)", config["data_flat_mode
 town = st.selectbox("Town", config["data_towns"])
 
 if st.button("Submit"):
-    fastapi_url = "http://fastapi:80/predict" 
+    # This is needed because when running in docker-compose, the service name must be used
+    # But on AWS ECS, need to use localhost instead as both containers are within the same task
+    if os.getenv("RUNNING_IN_DOCKER_COMPOSE") == "True":
+        fastapi_url = "http://fastapi:80/predict" 
+    else:
+        fastapi_url = "http://localhost:80/predict"
     payload = {
         "flat_age_years": flat_age_years,
         "floor_area_sqm": floor_area_sqm,
