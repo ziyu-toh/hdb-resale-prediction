@@ -70,9 +70,14 @@ def lambda_handler(event, context):
     trigger_training_num = check_numerical_distribution(train_df, test_df)
     if trigger_training_cat + trigger_training_num > 0:
         print("At least one data validation check failed. Triggering model retraining.")
-        # lambda_client = boto3.client('lambda', region_name='ap-southeast-1')
-        # response = lambda_client.invoke(
-        #     FunctionName='hdb-resale-retraining',
-        #     InvocationType='RequestResponse'  # Synchronous invocation
-        # )
+        lambda_client = boto3.client('lambda', region_name='ap-southeast-1')
+        response = lambda_client.invoke(
+            FunctionName='hdb-resale-retraining',
+            InvocationType='Event'  # Asynchronous invocation bc no need to wait for response
+        )
+        print("Retraining Lambda response:", response)
+        
+    print("Data validation process completed.")
 
+if __name__ == "__main__":
+    lambda_handler(None, None)

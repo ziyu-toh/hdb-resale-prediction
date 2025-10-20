@@ -35,11 +35,11 @@ def lambda_handler(event, context):
     print("Challenger RMSE: ", challenger_rmse)
     print("Champion RMSE: ", champion_rmse)
 
-    # if challenger_rmse < champion_rmse * 0.95:
-    #     print("Challenger model is better with score of: ", challenger_rmse, " vs ", champion_rmse)
-    #     # Save challenger model and metrics to S3
-    #     joblib.dump(challenger_model, '/tmp/challenger_model.joblib')
-    #     s3.upload_file("/tmp/challenger_model.joblib", 
-    #                   'hdb-resale-best-model', 
-    #                   'champion_model.joblib')
-    #     print("Challenger model uploaded and updated successfully.")
+    if challenger_rmse < champion_rmse * 0.95:
+        print("Challenger model is better with score of: ", challenger_rmse, " vs ", champion_rmse)
+        # Save challenger model and metrics to S3
+        joblib.dump(challenger_model, '/tmp/challenger_model.joblib')
+        s3.upload_file("/tmp/challenger_model.joblib", 
+                      'hdb-resale-best-model', 
+                      'champion_model.joblib')
+        print("Challenger model uploaded and updated successfully.")
